@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Miffy Pomodoro</title>
+<title>Yuki Pomodoro</title>
 <style>
 :root{--cream:#fffaf2;--paper:#fffdf9;--pink:#f4c9cf;--rose:#d98e99;--brown:#493c39;--green:#9caf92;--line:#eaded5}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(145deg,#fffaf2,#f9eee9);font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif;color:var(--brown);display:grid;place-items:center;padding:28px}
@@ -34,7 +34,7 @@ h1{font-size:28px;margin:0 0 5px;letter-spacing:.2px}.sub{font-size:14px;opacity
 </head>
 <body>
 <main class="app">
-<header><div><h1>🐰 Miffy Pomodoro</h1><div class="sub">A little work companion for quiet, focused time.</div></div><div class="badge">25 · 5 · 15</div></header>
+<header><div><h1>🐰 Yuki Pomodoro</h1><div class="sub">A little work companion for quiet, focused time.</div></div><div class="badge">25 · 5 · 15</div></header>
 <section class="main">
 <div class="bunny-wrap"><div class="bunny" aria-label="Yuki, a white blue-eyed Netherland Dwarf rabbit illustration"><div class="ear left"></div><div class="ear right"></div><div class="body"></div><div class="leg l"></div><div class="leg r"></div><div class="head"><i class="eye l"></i><i class="eye r"></i><i class="mouth"></i></div></div></div>
 <div class="timer">
@@ -54,7 +54,7 @@ function render(){
   $("bar").style.width=Math.max(0,Math.min(100,(1-remaining/total)*100))+"%"; $("start").textContent=running?"Pause":"Start"; $("count").textContent=completed;
   document.querySelectorAll(".modebtn").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));
   $("dots").innerHTML=Array.from({length:4},(_,i)=>'<span class="dot '+(i<cycle?'done ':'')+(i===cycle?'current':'')+'"></span>').join("");
-  document.title=(remaining?$("time").textContent:"00:00")+" · Miffy Pomodoro";
+  document.title=(remaining?$("time").textContent:"00:00")+" · Yuki Pomodoro";
 }
 function setMode(m){mode=m;running=false;remaining=settings[m]*60;render()}
 function finish(){if(mode==="focus"){completed++;cycle++; mode=cycle%4===0?"long":"short"}else{mode="focus"} remaining=settings[mode]*60; running=false; render(); try{new AudioContext().resume()}catch(e){}}
