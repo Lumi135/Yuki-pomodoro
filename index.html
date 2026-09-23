@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Miffy Pomodoro</title>
+<style>
+:root{--cream:#fffaf2;--paper:#fffdf9;--pink:#f4c9cf;--rose:#d98e99;--brown:#493c39;--green:#9caf92;--line:#eaded5}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(145deg,#fffaf2,#f9eee9);font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif;color:var(--brown);display:grid;place-items:center;padding:28px}
+.app{width:min(900px,100%);background:rgba(255,253,249,.94);border:1px solid var(--line);border-radius:34px;padding:32px 38px 28px;box-shadow:0 20px 60px rgba(88,65,58,.12)}
+header{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:20px}
+h1{font-size:28px;margin:0 0 5px;letter-spacing:.2px}.sub{font-size:14px;opacity:.7}
+.badge{background:#f7e5e3;border-radius:999px;padding:9px 14px;font-size:12px}
+.main{display:grid;grid-template-columns:280px 1fr;gap:38px;align-items:center}
+.bunny-wrap{height:330px;display:grid;place-items:center;position:relative}
+.bunny{position:relative;width:170px;height:220px}
+.ear{position:absolute;width:48px;height:125px;background:#fff;border:2px solid #eee6e0;border-radius:48% 48% 42% 42%;top:0;z-index:0}
+.ear.left{left:27px;transform:rotate(-4deg)}.ear.right{right:27px;transform:rotate(4deg)}
+.head{position:absolute;width:154px;height:140px;background:#fff;border:2px solid #eee6e0;border-radius:48% 48% 45% 45%;left:8px;top:75px;z-index:2}
+.eye{position:absolute;width:7px;height:7px;background:#272322;border-radius:50%;top:55px}.eye.l{left:47px}.eye.r{right:47px}
+.mouth{position:absolute;left:62px;top:79px;width:31px;height:18px}.mouth:before,.mouth:after{content:"";position:absolute;width:24px;height:2.5px;background:#272322;top:7px;left:3px;border-radius:2px}.mouth:before{transform:rotate(25deg)}.mouth:after{transform:rotate(-25deg)}
+.body{position:absolute;width:112px;height:72px;background:#e9b5bd;border-radius:42px 42px 28px 28px;left:29px;top:190px;z-index:1}
+.leg{position:absolute;width:48px;height:18px;background:#e9b5bd;border-radius:50%;top:244px;z-index:1}.leg.l{left:25px}.leg.r{right:25px}
+.timer{text-align:center}.mode{font-size:14px;letter-spacing:1.5px;text-transform:uppercase;opacity:.65;margin-bottom:5px}
+.time{font-variant-numeric:tabular-nums;font-size:94px;line-height:1;font-weight:700;letter-spacing:3px;margin:10px 0 22px}
+.progress{height:8px;background:#f1e9e3;border-radius:99px;overflow:hidden;margin:0 auto 22px;max-width:520px}.bar{height:100%;width:0;background:var(--rose);transition:width .3s}
+.buttons{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.btn{border:0;border-radius:999px;padding:12px 19px;font:inherit;cursor:pointer;background:#f3e8e1;color:var(--brown);transition:.15s}.btn:hover{transform:translateY(-1px)}.primary{background:var(--rose);color:white;min-width:115px}.ghost{background:transparent;border:1px solid var(--line)}
+.modes{display:flex;justify-content:center;gap:8px;margin:20px 0 8px}.modebtn{padding:8px 13px;border:1px solid var(--line);border-radius:999px;background:white;cursor:pointer;color:var(--brown);font:inherit;font-size:13px}.modebtn.active{background:#f7e0e2;border-color:#e8b4bb}
+.footer{display:flex;justify-content:space-between;align-items:center;margin-top:25px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;opacity:.75}.dots{display:flex;gap:7px}.dot{width:9px;height:9px;border-radius:50%;background:#eadfd9}.dot.done{background:var(--green)}.dot.current{background:var(--rose)}
+.settings{display:flex;align-items:center;gap:8px}.settings input{width:58px;border:1px solid var(--line);border-radius:10px;padding:6px 7px;font:inherit;text-align:center;background:white}
+@media(max-width:700px){.app{padding:24px}.main{grid-template-columns:1fr;gap:0}.bunny-wrap{height:250px}.bunny{transform:scale(.82)}.time{font-size:72px}.footer{gap:12px;align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<main class="app">
+<header><div><h1>🐰 Miffy Pomodoro</h1><div class="sub">A little work companion for quiet, focused time.</div></div><div class="badge">25 · 5 · 15</div></header>
+<section class="main">
+<div class="bunny-wrap"><div class="bunny" aria-label="simple white bunny illustration"><div class="ear left"></div><div class="ear right"></div><div class="body"></div><div class="leg l"></div><div class="leg r"></div><div class="head"><i class="eye l"></i><i class="eye r"></i><i class="mouth"></i></div></div></div>
+<div class="timer">
+<div class="mode" id="mode">Focus</div><div class="time" id="time">25:00</div><div class="progress"><div class="bar" id="bar"></div></div>
+<div class="buttons"><button class="btn primary" id="start">Start</button><button class="btn" id="reset">Reset</button><button class="btn" id="skip">Skip</button></div>
+<div class="modes"><button class="modebtn active" data-mode="focus">Focus</button><button class="modebtn" data-mode="short">Short break</button><button class="modebtn" data-mode="long">Long break</button></div>
+<div class="settings">Focus minutes <input id="focusMin" type="number" min="1" max="120" value="25"></div>
+</div></section>
+<footer><div>Sessions completed: <strong id="count">0</strong></div><div class="dots" id="dots"></div></footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let settings={focus:25,short:5,long:15}, mode="focus", remaining=settings.focus*60, running=false, startedAt=0, tick=null, completed=0, cycle=0;
+function label(){return mode==="focus"?"Focus":mode==="short"?"Short break":"Long break"}
+function render(){
+  $("mode").textContent=label(); const total=settings[mode]*60; $("time").textContent=String(Math.floor(remaining/60)).padStart(2,"0")+":"+String(remaining%60).padStart(2,"0");
+  $("bar").style.width=Math.max(0,Math.min(100,(1-remaining/total)*100))+"%"; $("start").textContent=running?"Pause":"Start"; $("count").textContent=completed;
+  document.querySelectorAll(".modebtn").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));
+  $("dots").innerHTML=Array.from({length:4},(_,i)=>'<span class="dot '+(i<cycle?'done ':'')+(i===cycle?'current':'')+'"></span>').join("");
+  document.title=(remaining?$("time").textContent:"00:00")+" · Miffy Pomodoro";
+}
+function setMode(m){mode=m;running=false;remaining=settings[m]*60;render()}
+function finish(){if(mode==="focus"){completed++;cycle++; mode=cycle%4===0?"long":"short"}else{mode="focus"} remaining=settings[mode]*60; running=false; render(); try{new AudioContext().resume()}catch(e){}}
+function startPause(){
+ if(running){running=false;clearInterval(tick);render();return}
+ running=true; render(); clearInterval(tick);
+ tick=setInterval(()=>{remaining--; if(remaining<=0){remaining=0;render();clearInterval(tick);finish()} else render()},1000)
+}
+$("start").onclick=startPause;
+$("reset").onclick=()=>{running=false;clearInterval(tick);remaining=settings[mode]*60;render()};
+$("skip").onclick=()=>{running=false;clearInterval(tick);mode=mode==="focus"?"short":"focus";remaining=settings[mode]*60;render()};
+document.querySelectorAll(".modebtn").forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
+$("focusMin").onchange=e=>{settings.focus=Math.max(1,Math.min(120,+e.target.value||25));if(mode==="focus"&&!running){remaining=settings.focus*60;render()}};
+document.addEventListener("keydown",e=>{if(e.code==="Space"&&e.target.tagName!=="INPUT"){e.preventDefault();startPause()}if(e.key.toLowerCase()==="r"){$("reset").click()}});
+render();
+</script>
+</body></html>
