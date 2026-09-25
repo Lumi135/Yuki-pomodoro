@@ -57,7 +57,22 @@ function render(){
   document.title=(remaining?$("time").textContent:"00:00")+" · Yuki Pomodoro";
 }
 function setMode(m){mode=m;running=false;remaining=settings[m]*60;render()}
-function finish(){if(mode==="focus"){completed++;cycle++; mode=cycle%4===0?"long":"short"}else{mode="focus"} remaining=settings[mode]*60; running=false; render(); try{new AudioContext().resume()}catch(e){}}
+function playGentleChime(){
+  try{
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    const now=ctx.currentTime;
+    [659.25,783.99,987.77].forEach((freq,i)=>{
+      const osc=ctx.createOscillator(), gain=ctx.createGain();
+      osc.type="sine"; osc.frequency.value=freq;
+      gain.gain.setValueAtTime(0,now+i*0.18);
+      gain.gain.linearRampToValueAtTime(0.12,now+i*0.18+0.03);
+      gain.gain.exponentialRampToValueAtTime(0.001,now+i*0.18+0.65);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(now+i*0.18); osc.stop(now+i*0.18+0.7);
+    });
+  }catch(e){}
+}
+function finish(){playGentleChime();if(mode==="focus"){completed++;cycle++; mode=cycle%4===0?"long":"short"}else{mode="focus"} remaining=settings[mode]*60; running=false; render();}
 function startPause(){
  if(running){running=false;clearInterval(tick);render();return}
  running=true; render(); clearInterval(tick);
